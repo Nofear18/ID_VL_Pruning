@@ -21,7 +21,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
 
 * Dataset & Annotation
 
-    Download the COCO dataset, unzip it under the `datasets` folder, and accordingly modify the `image_root` in [config](./configs/caption_coco.yaml). Download all-in-one annotations  from [this link](https://drive.google.com/uc?export=download&id=19Vk07K3DbQYa68DipJ4dFNcF0_Br7cmD), unzip it under the `coco/annotation` folder, and accordingly modify the `annotation` in [config](./configs/caption_coco.yaml).
+    Download the COCO2014 dataset, unzip it under the `datasets` folder, and accordingly modify the `image_root` in [config](./configs/caption_coco.yaml). Download all-in-one annotations  from [this link](https://drive.google.com/uc?export=download&id=19Vk07K3DbQYa68DipJ4dFNcF0_Br7cmD), unzip it under the `coco/annotation` folder, and accordingly modify the `annotation` in [config](./configs/caption_coco.yaml).
 
 
 * Compression
@@ -32,7 +32,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
     ```
 * Evaluation
   
-    After obtaining the pruning model, accordingly modify the `--pruned` of the scripts. For example, to evaluate a 80% sparsity model: 
+    After obtaining the pruning model, accordingly modify the `--pruned` of the scripts. For example, to evaluate sparse  model: 
     ```bash
     python -m torch.distributed.run  --nproc_per_node=2 --master_port=29505 train_caption.py  --pruner_name PLATON --pruned pruned_model_path --evaluate
     ```
@@ -51,7 +51,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
     ```
 * Evaluation
   
-    After obtaining the pruning model, accordingly modify the `--pruned` of the scripts. For example, to evaluate a 80% sparsity model: 
+    After obtaining the pruning model, accordingly modify the `--pruned` of the scripts. For example, to evaluate a sparse model: 
     ```bash
     python -m torch.distributed.run  --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned pruned_model_path --evaluate
     ```
