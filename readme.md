@@ -22,7 +22,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
     python ComputeID.py -n 2000 --Path ID/Blip_coco --gpu 0
     ```
 
-###:rabbit: Image Caption on the COCO Caption Dataset using BLIP
+### :snowman: Image Caption on the COCO Caption Dataset using BLIP
 
 * Dataset & Annotation
 
