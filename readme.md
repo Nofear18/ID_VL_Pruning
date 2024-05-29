@@ -4,15 +4,15 @@
 
 Official implementation of [Exploring Intrinsic Dimension for Vision-Language Model Pruning](https://openreview.net/forum?id=xxL7CEWuxz&noteId=dIPRrajDnh). 
 
-🧐 The following picture shows the [Intrinsic Dimension](https://proceedings.neurips.cc/paper/2019/hash/cfcce0621b49c983991ead4c3d4d3b6b-Abstract.html) of various multimodal models.
+:gem: The following picture shows the [Intrinsic Dimension](https://proceedings.neurips.cc/paper/2019/hash/cfcce0621b49c983991ead4c3d4d3b6b-Abstract.html) of various multimodal models.
 ![Example Image](ID.png)
 
 
 
-### Installation
+### :hammer: Installation
 The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The dependencies can be installed by <pre/> conda install --yes --file requirements.txt </pre>
 
-### Compute the Intrinsic Dimensionality
+### :cat: Compute the Intrinsic Dimensionality
 * Computing use CPU mode
     ```bash
     python ComputeID.py -n 2000 --Path ID/Blip_coco --cpu
@@ -22,7 +22,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
     python ComputeID.py -n 2000 --Path ID/Blip_coco --gpu 0
     ```
 
-### Image Caption on the COCO Caption Dataset
+###:rabbit: Image Caption on the COCO Caption Dataset using BLIP
 
 * Dataset & Annotation
 
@@ -42,7 +42,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
     python -m torch.distributed.run  --nproc_per_node=2 --master_port=29505 train_caption.py  --pruner_name PLATON --pruned pruned_model_path --evaluate
     ```
   
-### Visual Reasoning on the NLVR2 Dataset
+### :fish: Visual Reasoning on the NLVR2 Dataset using BLIP
 
 * Dataset & Annotation
 
@@ -61,7 +61,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
     python -m torch.distributed.run  --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned pruned_model_path --evaluate
     ```
     
-### Acknowledgment
+### :tulip: Acknowledgment
 This code is built upon <a href="https://github.com/salesforce/BLIP">BLIP</a> and <a href="https://github.com/QingruZhang/PLATON">PLATON</a>. We thank the original authors for their open-source work.
 
 
