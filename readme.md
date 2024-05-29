@@ -6,11 +6,11 @@
 This is the official implementation of ICML'24 paper [Exploring Intrinsic Dimension for Vision-Language Model Pruning](https://openreview.net/forum?id=xxL7CEWuxz&noteId=dIPRrajDnh). 
 
 ## 🏃‍♂️ TL;DR
-The ID [Intrinsic Dimension](https://proceedings.neurips.cc/paper/2019/hash/cfcce0621b49c983991ead4c3d4d3b6b-Abstract.html) of vision representations spans a wider and greater range than that of language representations, which we attribute to the heightened sensitivity of vision models to pruning. In contrast, language models exhibit greater robustness despite containing more redundant weights.
+The [Intrinsic Dimension (ID)](https://proceedings.neurips.cc/paper/2019/hash/cfcce0621b49c983991ead4c3d4d3b6b-Abstract.html) of vision representations spans a wider and greater range than that of language representations, which we attribute to the heightened sensitivity of vision models to pruning. In contrast, language models exhibit greater robustness despite containing more redundant weights.
 
 ![Example Image](ID.png)
 
-## :hammer: Installation
+## 🔨 Installation
 This code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. Install the dependencies with:
 ```bash
 conda install --yes --file requirements.txt
@@ -66,10 +66,10 @@ conda install --yes --file requirements.txt
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
         ```
 
-## :bouquet: Acknowledgments
-This code is built upon [BLIP](https://github.com/salesforce/BLIP) and [PLATON](https://github.com/QingruZhang/PLATON). We thank their contributions.
+## 💐 Acknowledgments
+This code is built upon [BLIP](https://github.com/salesforce/BLIP) and [PLATON](https://github.com/QingruZhang/PLATON), and we sincerely appreciate their contributions.
 
-## :cherry_blossom: Citation
+## 🌸 Citation
 If you find this work useful, please consider citing our paper:
 ```bibtex
 @inproceedings{
