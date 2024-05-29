@@ -67,7 +67,7 @@ conda install --yes --file requirements.txt
         ```
 
 ## 💐 Acknowledgments
-This code is built upon [BLIP](https://github.com/salesforce/BLIP) and [PLATON](https://github.com/QingruZhang/PLATON), and we sincerely appreciate their contributions.
+This code is built upon [IntrinsicDimDeep](https://github.com/ansuini/IntrinsicDimDeep), [BLIP](https://github.com/salesforce/BLIP) and [PLATON](https://github.com/QingruZhang/PLATON), and we sincerely appreciate their contributions.
 
 ## 🌸 Citation
 If you find this work useful, please consider citing our paper:
