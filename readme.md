@@ -7,7 +7,7 @@ Official implementation of [Exploring Intrinsic Dimension for Vision-Language Mo
 ### 🧐 Quick Look 
 * **What is it**: It's the first work which introduces a novel metric for pruning multimodal models based on the **intrinsic dimension**, and we utilize TwoNN to estimate the intrinsic dimension (ID) of the representations
 produced by each layer of a pre-trained model, as the following picture shows.
-![Example Image](ID.jpg)
+![Example Image](ID.png)
 
 
 ### Installation
