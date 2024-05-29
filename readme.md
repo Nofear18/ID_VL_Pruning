@@ -59,7 +59,7 @@ The code is tested on `Pytorch==1.11.0`, `cuda==11.5`, and `python==3.9.0`. The 
 * Evaluation
    After obtaining the pruned model, put them under the `output`folder, and accordingly modify the `--pretrained` of the scripts. For example, to evaluate the pruned model, you can run the following command: 
 
-       ```bash
+    ```bash
     python -m torch.distributed.run  --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
     ```
     
