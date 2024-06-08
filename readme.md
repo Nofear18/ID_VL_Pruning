@@ -6,7 +6,7 @@
 This is the official implementation of ICML'24 paper [Exploring Intrinsic Dimension for Vision-Language Model Pruning](https://openreview.net/forum?id=xxL7CEWuxz&noteId=dIPRrajDnh). 
 
 ## 🏃‍♂️ TL;DR
-The [Intrinsic Dimension (ID)](https://proceedings.neurips.cc/paper/2019/hash/cfcce0621b49c983991ead4c3d4d3b6b-Abstract.html) of vision representations spans a wider and greater range than that of language representations, which we attribute to the heightened sensitivity of vision models to pruning. In contrast, language models exhibit greater robustness despite containing more redundant weights.
+The [Intrinsic Dimension (ID)](https://github.com/ansuini/IntrinsicDimDeep?tab=readme-ov-file#intro) of vision representations spans a wider and greater range than that of language representations, which we attribute to the heightened sensitivity of vision models to pruning. In contrast, language models exhibit greater robustness despite containing more redundant weights.
 
 ![Example Image](ID.png)
 
