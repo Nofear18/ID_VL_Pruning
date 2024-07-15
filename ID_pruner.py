@@ -18,7 +18,6 @@ import matplotlib.ticker as tick
 
 class Pruner(object):
     def __init__(self, model, args, total_step,
-                 # 只剪vision
                  mask_param_name=['attn.qkv', 'attn.proj', 'mlp.fc1', 'mlp.fc2','attention.self',
                                   'crossattention.self',  '.attention.output.dense', 'crossattention.output.dense', 'intermediate.dense',
                                   'output.dense'],
