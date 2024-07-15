@@ -29,10 +29,8 @@ from torch.autograd import Variable
 import torchvision
 from torchvision import datasets, models, transforms
 from torchsummary import summary
-from torchvision.models import vgg16
 
 from models.blip import blip_decoder
-from onenn import id_analysis as estimate_dim_1nn
 from data import create_dataset, create_sampler, create_loader
 
 
@@ -190,13 +188,6 @@ def estimate_ID_2nn(data, device="cpu"):
 
     return np.average(dim), std[19], n
 
-def estimate_ID_1nn(data, device="cpu"):
-    return  estimate_dim_1nn(data)
-
-algorithm_mapping = {
-    '1nn': estimate_ID_1nn,
-    '2nn': estimate_ID_2nn
-}
 
 def main(config, args):
     # change your paths here
@@ -260,7 +251,6 @@ def main(config, args):
         is_trains=[True, False, False],
         collate_fns=[None, None, None],
     )
-    # print(len(train_loader))
     rcdr = DataRecorder(dataloader_path, modules)
     for l, module in enumerate(modules):
         f = open(os.path.join(results_folder, "ID.txt"), "a")
@@ -292,7 +282,7 @@ def main(config, args):
         Out = torch.cat(datas, 0)
         s = Out.shape
         Out = Out.reshape((s[0], -1)).detach().cpu()
-        dim, std, n = algorithm_mapping[args.a](Out, device)
+        dim, std, n = estimate_ID_2nn(Out, device)
 
         with open(join(results_folder, "dim.txt"), "a") as f:
             print(f"========={l}===========", file=f)
@@ -312,7 +302,6 @@ if __name__ == "__main__":
             description='What the program does',
             epilog='Text at the bottom of help')
     parser.add_argument('-n', '--nsamples', type=int, default=600,help='Number of samples selected')
-    parser.add_argument('-a', choices=['2nn', '1nn'], default='2nn', help="algorithm to use")
     parser.add_argument('--gpu', default="0", help="gpu to use. NOTE, even in CPU mode, this code still need around 2GB of GPU memory")
     parser.add_argument('--cpu', action='store_true', help="CPU mode")
     parser.add_argument('-s', action='store_true', help="skip data extract")  # on/off flag
