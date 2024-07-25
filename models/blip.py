@@ -41,7 +41,7 @@ class BLIP_Base(nn.Module):
     def forward(self, image, caption, mode):
         
         assert mode in ['image', 'text', 'multimodal'], "mode parameter must be image, text, or multimodal"
-        #文本和图像要在同一个设备中
+
         text = self.tokenizer(caption, return_tensors="pt").to(image.device)
         
         if mode=='image':    
@@ -69,8 +69,7 @@ class BLIP_Base(nn.Module):
                                       )              
             return output.last_hidden_state
         
-        
-  #文本段是解码器组成，一般用于Caption
+
 class BLIP_Decoder(nn.Module):
     def __init__(self,                 
                  med_config = 'configs/med_config.json',
@@ -128,7 +127,7 @@ class BLIP_Decoder(nn.Module):
             image_embeds = image_embeds.repeat_interleave(num_beams,dim=0)
             
         image_atts = torch.ones(image_embeds.size()[:-1],dtype=torch.long).to(image.device)
-        #字典，存储过程中的生成
+       
         model_kwargs = {"encoder_hidden_states": image_embeds, "encoder_attention_mask":image_atts}
         
         prompt = [self.prompt] * image.size(0)
@@ -137,8 +136,7 @@ class BLIP_Decoder(nn.Module):
         input_ids = input_ids[:, :-1] 
 
         if sample:
-            #nucleus sampling  核采样 合成文本端的字幕 性能更好；
-            # 核采样产生了更多样化和令人惊讶的标题，其中包含了更多的新信息，模型可以从中受益
+           
             outputs = self.text_decoder.generate(input_ids=input_ids,
                                                   max_length=max_length,
                                                   min_length=min_length,
@@ -150,7 +148,7 @@ class BLIP_Decoder(nn.Module):
                                                   repetition_penalty=1.1,                                            
                                                   **model_kwargs)
         else:
-            #beam search  波束搜索
+            #beam search  
             outputs = self.text_decoder.generate(input_ids=input_ids,
                                                   max_length=max_length,
                                                   min_length=min_length,
@@ -224,7 +222,7 @@ def create_vit(vit, image_size, use_grad_checkpointing=False, ckpt_layer=0, drop
 def is_url(url_or_filename):
     parsed = urlparse(url_or_filename)
     return parsed.scheme in ("http", "https")
-#模型的保存与加载
+
 def load_checkpoint(model,url_or_filename):
     if is_url(url_or_filename):
         cached_file = download_cached_file(url_or_filename, check_hash=False, progress=True)

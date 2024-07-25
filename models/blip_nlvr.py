@@ -98,16 +98,6 @@ def load_checkpoint(model,url_or_filename):
     else:
         raise RuntimeError('checkpoint url or path is invalid')
     state_dict = checkpoint['model']
-    # checkpoint = torch.load(url_or_filename, map_location='cpu')
-    # from collections import OrderedDict
-    # new_state_dict = OrderedDict()
-
-    # for k, v in checkpoint['model_state_dict'].items():
-    #     name = k[7:]  # 去掉 `module.`
-    #     new_state_dict[name] = v
-    # # 加载参数
-    # # model.load_state_dict(new_state_dict)
-    # state_dict=new_state_dict
     state_dict['visual_encoder.pos_embed'] = interpolate_pos_embed(state_dict['visual_encoder.pos_embed'],model.visual_encoder) 
     
     for key in list(state_dict.keys()):

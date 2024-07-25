@@ -101,7 +101,7 @@ class BertSelfAttention(nn.Module):
         self.all_head_size = self.num_attention_heads * self.attention_head_size#768
 
         self.query = nn.Linear(config.hidden_size, self.all_head_size)#768 768
-        if is_cross_attention:#是交叉注意力层
+        if is_cross_attention:
             self.key = nn.Linear(config.encoder_width, self.all_head_size)#768 768
             self.value = nn.Linear(config.encoder_width, self.all_head_size)
         else:
