@@ -257,7 +257,8 @@ def main(config, args):
             pbar.update(bs)
             rcdr.iter = k
             inputs1, inputs2, img_id = data
-            out = model(inputs1.to(device), inputs2)
+            with torch.no_grad():
+                out = model(inputs1.to(device), inputs2)
             del out
         pbar.close()
     del model
