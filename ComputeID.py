@@ -63,73 +63,63 @@ class DataRecorder:
 
 
 def estimate(X, fraction=0.9, verbose=True):
-
-    # sort distance matrix
-    Y = np.sort(X, axis=1, kind="quicksort")
+    # Sort the distance matrix
+    sorted_distances = np.sort(X, axis=1, kind="quicksort")
 
     if verbose:
-        print("Y")
-        print(Y)
-    k1 = Y[:, 1]
+        print("Sorted distance matrix:")
+        print(sorted_distances)
+
+    # Extract first and second nearest neighbors
+    first_neighbor = sorted_distances[:, 1]
+    second_neighbor = sorted_distances[:, 2]
+
     if verbose:
-        print("k1")
-        print(k1)
-    # print(k1.shape)
-    k2 = Y[:, 2]
+        print("First neighbors:", first_neighbor)
+        print("Second neighbors:", second_neighbor)
+
+    # Identify degenerate cases
+    zero_distances = np.where(first_neighbor == 0)[0]
+    equal_neighbors = np.where(first_neighbor == second_neighbor)[0]
+
     if verbose:
-        print("k2")
-        print(k2)
+        print(f"Found {zero_distances.shape[0]} elements where r1 = 0.")
+        print(f"Found {equal_neighbors.shape[0]} elements where r1 = r2.")
+        
+    # Exclude degenerate cases
+    valid_indices = np.setdiff1d(np.arange(sorted_distances.shape[0]), zero_distances)
+    valid_indices = np.setdiff1d(valid_indices, equal_neighbors)
 
-    zeros = np.where(k1 == 0)[0]
     if verbose:
-        print("Found n. {} elements for which r1 = 0".format(zeros.shape[0]))
-        print(zeros)
+        print(f"Fraction of valid points: {valid_indices.shape[0] / sorted_distances.shape[0]:.2f}")
 
-    degeneracies = np.where(k1 == k2)[0]
-    if verbose:
-        print(
-            "Found n. {} elements for which r1 = r2".format(degeneracies.shape[0])
-        )
-        print(degeneracies)
+    first_neighbor = first_neighbor[valid_indices]
+    second_neighbor = second_neighbor[valid_indices]
 
-    good = np.setdiff1d(
-        np.arange(Y.shape[0]), np.array(zeros)
-    )
-    if verbose:
-        print(good)
+    # Number of points for linear regression
+    npoints = int(np.floor(valid_indices.shape[0]))
 
-    good = np.setdiff1d(good, np.array(degeneracies))
-    # if verbose:
-    # ==================================================
-    # print(good)
-    if verbose:
-        print("Fraction good points: {}".format(good.shape[0] / Y.shape[0]))
+    # Define mu and empirical cumulative distribution (Femp)
+    mu = np.sort(np.divide(second_neighbor, first_neighbor), kind="quicksort")
+    N = valid_indices.shape[0]
+    Femp = np.arange(1, N + 1) / N
 
-    k1 = k1[good]
-    k2 = k2[good]
-
-    # n.of points to consider for the linear regression
-    npoints = int(np.floor(good.shape[0]))
-
-    # define mu and Femp
-    N = good.shape[0]
-    mu = np.sort(np.divide(k2, k1), axis=None, kind="quicksort")  # u
-    Femp = (np.arange(1, N + 1, dtype=np.float64)) / N
-
-    # take logs (leave out the last element because 1-Femp is zero there)
+    # Take logarithms for regression (omit last two elements due to zero issues)
     x = np.log(mu[:-2])
     y = -np.log(1 - Femp[:-2])
 
-    # regression
+    # Perform linear regression
     regr = linear_model.LinearRegression(fit_intercept=False)
     if npoints <= 3:
-        print("exception, let's debug")
-        # q.d()
-    regr.fit(
-        x[0:npoints, np.newaxis], y[0:npoints, np.newaxis]
-    )
-    r, pval = pearsonr(x[0:npoints], y[0:npoints])
-    return x, y, regr.coef_[0][0], r, pval
+        raise ValueError("Not enough points for reliable regression.")
+
+    regr.fit(x[:npoints, np.newaxis], y[:npoints, np.newaxis])
+    slope = regr.coef_[0][0]
+
+    # Calculate correlation coefficient and p-value
+    correlation, pval = pearsonr(x[:npoints], y[:npoints])
+    
+    return x, y, slope, correlation, pval
 
 
 def block_analysis(X, blocks=list(range(1, 21)), fraction=0.9):
