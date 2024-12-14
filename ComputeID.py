@@ -242,6 +242,8 @@ def main(config, args):
         collate_fns=[None, None, None],
     )
     rcdr = DataRecorder(dataloader_path, modules)
+    if os.path.exists(os.path.join(results_folder, "ID.txt")):
+        os.remove(os.path.join(results_folder, "ID.txt"))
     for l, module in enumerate(modules):
         f = open(os.path.join(results_folder, "ID.txt"), "a")
         f.write("module: {}".format(module) + "\n")
