@@ -55,6 +55,7 @@ class DataRecorder:
     def hook(self, module, input, output):
         level_n = self.modules[module]
         file_name = self.out_path(level_n, self.iter)
+        # extract representations as matrices of shape (n.nsamples,seq_len, hidden_size).
         data = output.cpu()
         torch.save(data, file_name)
 
@@ -263,6 +264,8 @@ def main(config, args):
                 out = model(inputs1.to(device), inputs2)
             del out
         pbar.close()
+    else:
+        rcdr.iter = nsamples // bs - 1
     del model
     del train_loader
     torch.cuda.empty_cache()
