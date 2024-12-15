@@ -10,9 +10,12 @@ import shutil
 import sys
 import time
 from collections import namedtuple
+import random
 
 import numpy as np
 import matplotlib.pyplot as plt
+import torch.utils
+import torch.utils.data
 from tqdm import tqdm
 from scipy.spatial.distance import pdist, squareform
 from scipy.stats import pearsonr
@@ -25,6 +28,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
 from torch.autograd import Variable
+from torch.utils.data import Subset
 
 import torchvision
 from torchvision import datasets, models, transforms
@@ -45,22 +49,6 @@ def expand_dim1(data, d1):
     shape[1] = d1 - shape[1]
     res = torch.cat([data, torch.zeros(shape)], 1)
     return res
-
-class DataRecorder:
-    def __init__(self, root, modules):
-        self.modules = {v: k for k, v in enumerate(modules)}
-        self.root = root
-        self.iter = 0
-
-    def hook(self, module, input, output):
-        level_n = self.modules[module]
-        file_name = self.out_path(level_n, self.iter)
-        # extract representations as matrices of shape (n.nsamples,seq_len, hidden_size).
-        data = output.cpu()
-        torch.save(data, file_name)
-
-    def out_path(self, level_n, iter):
-        return os.path.join(self.root, f"act_{level_n}_{iter}.pth")
 
 
 def estimate(X, fraction=0.9, verbose=True):
@@ -122,7 +110,6 @@ def estimate(X, fraction=0.9, verbose=True):
     
     return x, y, slope, correlation, pval
 
-
 def block_analysis(X, blocks=list(range(1, 21)), fraction=0.9):
     n = X.shape[0]
     dim = np.zeros(len(blocks))
@@ -147,7 +134,6 @@ def block_analysis(X, blocks=list(range(1, 21)), fraction=0.9):
 
     return dim, std, n_points
 
-
 def getDepths(model):
     count = 0
     modules = []
@@ -166,7 +152,6 @@ def getDepths(model):
     return modules, names, depths
 
 
-
 def estimate_ID_2nn(data, device="cpu"):
     s = data.shape
     distances = torch.pdist(data.to(device)).cpu().numpy()
@@ -179,6 +164,13 @@ def estimate_ID_2nn(data, device="cpu"):
 
     return np.average(dim), std[19], n
 
+def set_seed():
+    random.seed(999)
+    np.random.seed(999)
+    torch.manual_seed(999)
+    torch.cuda.manual_seed_all(999)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
 def main(config, args):
     # change your paths here
@@ -189,9 +181,7 @@ def main(config, args):
     result_id_filename = join(results_folder, "result_id.txt")
     result_mean_id_filename = join(results_folder, "result_mean_id.txt")
     result_bar_filename = join(results_folder, "result_bar.txt")
-    dataloader_path = join(results_folder, "dataload")
-    if not os.path.exists(dataloader_path):
-        os.mkdir(dataloader_path)
+
     if os.path.exists(result_bar_filename):
         os.unlink(result_bar_filename)
     if os.path.exists(result_id_filename):
@@ -199,9 +189,8 @@ def main(config, args):
     if os.path.exists(result_mean_id_filename):
         os.unlink(result_mean_id_filename)
 
-    # random generator init
-    torch.backends.cudnn.deterministic = True
-    torch.manual_seed(999)
+    # set random seeds
+    set_seed()
 
     # parameters
     i = 0
@@ -233,52 +222,52 @@ def main(config, args):
 
     samplers = [None, None, None]
     train_dataset, val_dataset, test_dataset = create_dataset("caption_coco", config)
+    random_indices = np.random.choice(len(train_dataset), nsamples, replace=False)
+    train_dataset= Subset(train_dataset, random_indices)
 
     train_loader, val_loader, test_loader = create_loader(
         [train_dataset, val_dataset, test_dataset],
         samplers,
         batch_size=[bs] * 3,
         num_workers=[0, 0, 0],
-        is_trains=[True, False, False],
+        is_trains=[False, False, False],
         collate_fns=[None, None, None],
     )
-    rcdr = DataRecorder(dataloader_path, modules)
+    
     if os.path.exists(os.path.join(results_folder, "ID.txt")):
         os.remove(os.path.join(results_folder, "ID.txt"))
     for l, module in enumerate(modules):
         f = open(os.path.join(results_folder, "ID.txt"), "a")
-        f.write("name: {}, module: {}".format(names[l], module) + "\n")
+        f.write("module: {}".format(module) + "\n")
         f.close()
-        handle = module.register_forward_hook(rcdr.hook)
-
-    if not args.s:
-        print("extract")
-        pbar = tqdm(total=nsamples)
-        for k, data in enumerate(train_loader, 0):
-            if k * bs >= nsamples:
-                break
-            pbar.update(bs)
-            rcdr.iter = k
-            inputs1, inputs2, img_id = data
-            with torch.no_grad():
-                out = model(inputs1.to(device), inputs2)
-            del out
-        pbar.close()
-    else:
-        rcdr.iter = nsamples // bs - 1
-    del model
-    del train_loader
-    torch.cuda.empty_cache()
 
     print("block_analysis")
     for l, (module, n) in enumerate(zip(tqdm(modules), names)):
-        datas = [torch.load(rcdr.out_path(l, k)) for k in range(rcdr.iter + 1)]
+        datas = []
+        # for data in all_batches:
+        for k, data in tqdm(enumerate(train_loader),total=nsamples//bs):
+            if k * bs >= nsamples:
+                break
+            inputs1, inputs2, img_id = data
+            print(img_id)
+            hout = []
+            def hook(module, input, output):
+                # extract representations as matrices of shape (n.nsamples, seq_len, hidden_size).
+                datas.append(output.cpu())
+            handle = module.register_forward_hook(hook)
+            with torch.no_grad():
+                out = model(inputs1.to(device), inputs2)
+            del out
+                 
+            handle.remove()
+
         max_dim1 = max([d.shape[1] for d in datas])
         datas = [expand_dim1(d, max_dim1) for d in datas]
-        Out = torch.cat(datas, 0)
-        s = Out.shape
-        Out = Out.reshape((s[0], -1)).detach().cpu()
-        dim, std, n = estimate_ID_2nn(Out, device)
+        datas = torch.cat(datas, 0)
+        s = datas.shape
+
+        datas = datas.reshape((s[0], -1)).detach().cpu()
+        dim, std, n = estimate_ID_2nn(datas, device)
 
         with open(join(results_folder, "dim.txt"), "a") as f:
             print(f"========={l}===========", file=f)
@@ -287,7 +276,7 @@ def main(config, args):
             print(std, file=f)
         with open(result_id_filename, "a") as f:
             print(dim, file=f)
-        del Out
+
     end_time=time.time()
     print('Tatal spend time:{}h'.format((end_time-start_time)/3600))
 
@@ -300,7 +289,6 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--nsamples', type=int, default=600,help='Number of samples selected')
     parser.add_argument('--gpu', default="0", help="gpu to use. NOTE, even in CPU mode, this code still need around 2GB of GPU memory")
     parser.add_argument('--cpu', action='store_true', help="CPU mode")
-    parser.add_argument('-s', action='store_true', help="skip data extract")  # on/off flag
     parser.add_argument('--Path', default='test', help="Paths for storing intermediate and final results")
 
     args = parser.parse_args()
