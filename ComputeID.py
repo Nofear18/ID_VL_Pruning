@@ -247,7 +247,7 @@ def main(config, args):
         os.remove(os.path.join(results_folder, "ID.txt"))
     for l, module in enumerate(modules):
         f = open(os.path.join(results_folder, "ID.txt"), "a")
-        f.write("module: {}".format(module) + "\n")
+        f.write("name: {}, module: {}".format(names[l], module) + "\n")
         f.close()
         handle = module.register_forward_hook(rcdr.hook)
 
@@ -286,7 +286,7 @@ def main(config, args):
         with open(result_bar_filename, "a") as f:
             print(std, file=f)
         with open(result_id_filename, "a") as f:
-            print(f"{np.average(dim)},", file=f)
+            print(dim, file=f)
         del Out
     end_time=time.time()
     print('Tatal spend time:{}h'.format((end_time-start_time)/3600))
