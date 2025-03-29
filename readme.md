@@ -36,7 +36,7 @@ conda install --yes --file requirements.txt
     1. Download the uncompressed model from [this link](https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_base_caption_capfilt_large.pth) and place it in the `pretrained` folder. Update the `pretrained` in [config](./configs/caption_coco.yaml).
     2. To prune BLIP by 80% and add Intrinsic Dimension to the importance score metric during pruning, run:
         ```bash
-        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_caption.py --final_threshold 0.2 --model_dir coco/PLATON80 --pruner_name PLATON --useID
+        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_caption.py --final_threshold 0.2 --model_dir coco/PLATONID80 --pruner_name PLATON --useID
         ```
 
 * **Evaluation**
@@ -56,7 +56,7 @@ conda install --yes --file requirements.txt
     1. Download the uncompressed model from [this link](https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_base_nlvr.pth) and place it in the `pretrained` folder. Update the `pretrained` in [config](./configs/nlvr.yaml).
     2. To prune BLIP by 80% and add Intrinsic Dimension to the importance score metric during pruning, run:
         ```bash
-        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_nlvr.py --final_threshold 0.2 --model_dir nlvr/PLATON80 --pruner_name PLATON --useID
+        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_nlvr.py --final_threshold 0.2 --model_dir nlvr/PLATONID80 --pruner_name PLATON --useID
         ```
 
 * **Evaluation**
@@ -75,7 +75,7 @@ conda install --yes --file requirements.txt
     1. Download the uncompressed model from [this link](https://drive.google.com/uc?export=download&id=1-MZP6xQRnmLZr1_pqUK4TvOA8Ic7XCoI) and place it in the `pretrained` folder. Update the `pretrained` in [config](./configs/retrieval_flickr_clip.yaml).
     2. To prune BLIP by 80% and add Intrinsic Dimension to the importance score metric during pruning, run:
         ```bash
-        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_clip_flickr30k.py --final_threshold 0.2 --model_dir flickr_clip/PLATON80 --pruner_name PLATON --useID
+        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_clip_flickr30k.py --final_threshold 0.2 --model_dir flickr_clip/PLATONID80 --pruner_name PLATON --useID
         ```
 * **Evaluation**
     1. Place the pruned model in the `output` folder and update the `--pruned` in the scripts.
