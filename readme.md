@@ -31,7 +31,6 @@ conda install --yes --file requirements.txt
 * **Dataset & Annotation**
     1. Download the COCO2014 dataset and unzip it under the `datasets` folder. Update the `image_root` in [config](./configs/caption_coco.yaml).
     2. Download all-in-one annotations from [this link](https://drive.google.com/uc?export=download&id=19Vk07K3DbQYa68DipJ4dFNcF0_Br7cmD), unzip it under the `coco/annotation` folder, and update the `annotation` in [config](./configs/caption_coco.yaml).
-
 * **Pruning**
     1. Download the uncompressed model from [this link](https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_base_caption_capfilt_large.pth) and place it in the `pretrained` folder. Update the `pretrained` in [config](./configs/caption_coco.yaml).
     2. To prune BLIP by 80% and add Intrinsic Dimension to the importance score metric during pruning, run:
@@ -70,7 +69,8 @@ conda install --yes --file requirements.txt
 * **Dataset & Annotation**
     1. Download the Flickr30k dataset from [this link](https://shannon.cs.illinois.edu/DenotationGraph/) and unzip it under the `datasets` folder. Update the `image_root` in [config](./configs/retrieval_flickr_clip.yaml).
     2. Download all-in-one annotations from [this link](https://drive.google.com/uc?export=download&id=19Vk07K3DbQYa68DipJ4dFNcF0_Br7cmD), unzip it under the `flickr30k/annotation` folder, and update the `annotation` in [config](./configs/nlvr.yaml).
-
+* **Model**
+    Download the CLIP form [this link](https://drive.google.com/uc?export=download&id=10p1oPdiMUqo0MfPul5hCb_h9mCaNCh6q) and update the `pretrained` in [config](./configs/retrieval_flickr_clip.yaml).
 * **Pruning**
     1. Download the uncompressed model from [this link](https://drive.google.com/uc?export=download&id=1-MZP6xQRnmLZr1_pqUK4TvOA8Ic7XCoI) and place it in the `pretrained` folder. Update the `pretrained` in [config](./configs/retrieval_flickr_clip.yaml).
     2. To prune BLIP by 80% and add Intrinsic Dimension to the importance score metric during pruning, run:
