@@ -64,7 +64,7 @@ conda install --yes --file requirements.txt
         ```bash
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
         ```
-### Image-Text Retrieval on the Flickr30k Dataset with CLIP
+### Image-Text Retrieval on the Flickr30K Dataset with CLIP
 
 * **Dataset & Annotation**
     1. Download the Flickr30k dataset from [this link](https://shannon.cs.illinois.edu/DenotationGraph/) and unzip it under the `datasets` folder. Update the `image_root` in [config](./configs/retrieval_flickr_clip.yaml).
