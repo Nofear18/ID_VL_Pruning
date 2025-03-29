@@ -40,7 +40,7 @@ conda install --yes --file requirements.txt
         ```
 
 * **Evaluation**
-    1. Place the pruned model in the `output` folder and update the `--pretrained` in the scripts. 
+    1. Place the pruned model in the `output` folder and update the `--pruned` in the scripts. 
     2. To evaluate the pruned model, run:
         ```bash
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_caption.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
@@ -60,7 +60,7 @@ conda install --yes --file requirements.txt
         ```
 
 * **Evaluation**
-    1. Place the pruned model in the `output` folder and update the `--pretrained` in the scripts.
+    1. Place the pruned model in the `output` folder and update the `--pruned` in the scripts.
     2. To evaluate the pruned model, run:
         ```bash
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
@@ -78,7 +78,7 @@ conda install --yes --file requirements.txt
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_clip_flickr30k.py --final_threshold 0.2 --model_dir flickr_clip/PLATON80 --pruner_name PLATON --useID
         ```
 * **Evaluation**
-    1. Place the pruned model in the `output` folder and update the `--pretrained` in the scripts.
+    1. Place the pruned model in the `output` folder and update the `--pruned` in the scripts.
     2. To evaluate the pruned model, run:
         ```bash
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_clip_flickr30k.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
