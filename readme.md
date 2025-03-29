@@ -65,9 +65,26 @@ conda install --yes --file requirements.txt
         ```bash
         python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_nlvr.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
         ```
+### Image-Text Retrieval on the Flickr30k Dataset with CLIP
 
+* **Dataset & Annotation**
+    1. Download the Flickr30k dataset from [this link](https://shannon.cs.illinois.edu/DenotationGraph/) and unzip it under the `datasets` folder. Update the `image_root` in [config](./configs/retrieval_flickr_clip.yaml).
+    2. Download all-in-one annotations from [this link](https://drive.google.com/uc?export=download&id=19Vk07K3DbQYa68DipJ4dFNcF0_Br7cmD), unzip it under the `flickr30k/annotation` folder, and update the `annotation` in [config](./configs/nlvr.yaml).
+
+* **Pruning**
+    1. Download the uncompressed model from [this link](https://drive.google.com/uc?export=download&id=1-MZP6xQRnmLZr1_pqUK4TvOA8Ic7XCoI) and place it in the `pretrained` folder. Update the `pretrained` in [config](./configs/retrieval_flickr_clip.yaml).
+    2. To prune BLIP by 80% and add Intrinsic Dimension to the importance score metric during pruning, run:
+        ```bash
+        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_clip_flickr30k.py --final_threshold 0.2 --model_dir flickr_clip/PLATON80 --pruner_name PLATON --useID
+        ```
+* **Evaluation**
+    1. Place the pruned model in the `output` folder and update the `--pretrained` in the scripts.
+    2. To evaluate the pruned model, run:
+        ```bash
+        python -m torch.distributed.run --nproc_per_node=2 --master_port=29505 train_clip_flickr30k.py --pruner_name PLATON --pruned output/pruned_model_path --evaluate
+        ```
 ## 💐 Acknowledgments
-This code is built upon [IntrinsicDimDeep](https://github.com/ansuini/IntrinsicDimDeep), [BLIP](https://github.com/salesforce/BLIP) and [PLATON](https://github.com/QingruZhang/PLATON), and we sincerely appreciate their contributions.
+This code is built upon [IntrinsicDimDeep](https://github.com/ansuini/IntrinsicDimDeep), [BLIP](https://github.com/salesforce/BLIP), [UPop](https://github.com/sdc17/UPop) and [PLATON](https://github.com/QingruZhang/PLATON), and we sincerely appreciate their contributions.
 
 ## 🌸 Citation
 If you find this work useful, please consider citing our paper:
