@@ -12,7 +12,7 @@ import numpy
 import torch
 import math
 import numpy as np
-from pruning.utils_nlvr import compute_prune_ratio
+from pruning.utils import compute_prune_ratio
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
 
@@ -184,7 +184,7 @@ class Pruner(object):
             f.write("global_step: {}".format(global_step) + "\n")
             f.write("mask_threshold: {}".format(mask_threshold) + "\n" + "--------------" + "\n")
             f.close()
-            compute_prune_ratio(args,model)
+            compute_prune_ratio(args,model,'blip_nlvr')#Supported types: 'blip_coco', 'blip_nlvr', 'clip_flickr'
             # print("ok")
         return threshold, mask_threshold
 

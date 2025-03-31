@@ -11,7 +11,7 @@ import numpy
 import torch
 import math
 import numpy as np
-from pruning.utils import compute_pruneRatio
+from pruning.utils import compute_prune_ratio
 
 import matplotlib.ticker as tick
 
@@ -109,9 +109,14 @@ class Pruner(object):
         is_dict = {}
         i = 0
         for n, p in model.named_parameters():
-            if self.whether_mask_para(n):
-                if self.pruner_name == 'Magnitude' or self.pruner_name == 'Taylor':
-                    is_dict[n] = self.ipt[n]
+            if self.whether_mask_para(n) :
+                if self.pruner_name == 'Magnitude' or self.pruner_name == 'Taylor' :
+                    if (useID):
+                        is_dict[n] = self.ipt[n]*ID[i]
+                        if ('bias' in n):
+                            i = i + 1
+                    else:
+                        is_dict[n] = self.ipt[n]
 
                 elif self.pruner_name == 'PLATON':
                     if (useID):
@@ -164,16 +169,14 @@ class Pruner(object):
             mask_threshold = self.mask_with_threshold(model, threshold, ID, useID)
         else:
             mask_threshold = None
-        #Record pruning ratio of each layer
-        if (global_step % 3000 == 0)or(global_step==30):
+        if (global_step % 3000 == 0) or (global_step % length == 0):
             P_path = args.result_dir + '/pruning_data'
             Path(P_path).mkdir(parents=True, exist_ok=True)
             f = open(os.path.join(P_path, '{}.txt'.format(args.model_dir)), "a")
             f.write("global_step: {}".format(global_step) + "\n")
             f.write("mask_threshold: {}".format(mask_threshold) + "\n" + "--------------" + "\n")
             f.close()
-            compute_pruneRatio(args, model)
-            print("computed ratio")
+            compute_prune_ratio(args,model,'blip_coco')#Supported types: 'blip_coco', 'blip_nlvr', 'clip_flickr'
         return threshold, mask_threshold
 
 

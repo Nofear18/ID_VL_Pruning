@@ -8,8 +8,20 @@ import matplotlib.pyplot as plt
 import os
 import matplotlib.pyplot as plt
 
+blip_coco_EXnameList=["embedding", "norm", "pos_embed", "patch_embed", "cls_token","transform.dense"]
+blip_coco_INnameList=[]
+blip_nlvr_EXnameList=["embedding", "norm", "pos_embed", "patch_embed", "cls_token", "cls_head"]
+blip_nlvr_INnameList=[]
+clip_flickr_EXnameList=[ '_m.' ]
+clip_flickr_INnameList=['out_proj','c_fc','c_proj']
 
-def compute_pruneRatio(args,model):
+
+def is_valid_name(name, include_keywords, exclude_keywords) :
+
+    return any(keyword in name for keyword in include_keywords) and all(
+        keyword not in name for keyword in exclude_keywords)
+
+def compute_prune_ratio(args,model,type):
     """
         Print out prune rate for each layer and the whole network
     """
@@ -19,10 +31,27 @@ def compute_pruneRatio(args,model):
     layer_id = 0
     v_pruning = 0
     all_pruning = 0
-    matrix = [0 for i in range(168)]#BLIP has a total of 168 target pruning layers
+    if type=='blip_coco':
+        Layer_num=168
+        v_layer_num=48
+        EXname=blip_coco_EXnameList
+        INname=blip_coco_INnameList
+    elif type=='blip_nlvr':
+        Layer_num = 222
+        v_layer_num = 48
+        EXname = blip_coco_EXnameList
+        INname = blip_coco_INnameList
+    elif type=='clip_flickr':
+        Layer_num=108
+        v_layer_num = 72
+        EXname = blip_coco_EXnameList
+        INname = blip_coco_INnameList
+    else:
+        raise ValueError(f"Invalid type: {type}. Supported types: 'blip_coco', 'blip_nlvr', 'clip_flickr'.")
+
+    matrix = [0 for i in range(Layer_num)]
     for n,p in model.named_parameters():
-        if (len(p.data.size()) == 2) and ("embedding" not in n) and ("norm" not in n) and ("pos_embed" not in n) and (
-                "patch_embed" not in n) and ("cls_token" not in n) and ("transform.dense" not in n):
+        if (len(p.data.size()) == 2) and is_valid_name(n,INname,EXname):
             param_this_layer = 1
             for dim in p.data.size():
                 param_this_layer *= dim
@@ -34,7 +63,7 @@ def compute_pruneRatio(args,model):
             nb_zero_param += zero_param_this_layer#所有层等于0加起来
 
             matrix[layer_id - 1] = 100. * zero_param_this_layer / param_this_layer#计算每层比例
-            if (layer_id < 49):#vision layer
+            if (layer_id <= v_layer_num):#vision layer
                 v_pruning += zero_param_this_layer * 1.
             all_pruning += zero_param_this_layer  * 1.#总剪枝比例
     Ratiostr = ','.join(str(j) for j in matrix)
