@@ -211,6 +211,8 @@ def main(args, config):
 
     optimizer = torch.optim.AdamW(params=model.parameters(), lr=config['init_lr'], weight_decay=config['weight_decay'])
 
+    best = 0
+    best_epoch = 0
     print("Start training")
     start_time = time.time()
 
