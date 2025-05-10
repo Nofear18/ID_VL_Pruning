@@ -18,7 +18,7 @@ clip_flickr_INnameList=['out_proj','c_fc','c_proj']
 
 def is_valid_name(name, include_keywords, exclude_keywords) :
 
-    return any(keyword in name for keyword in include_keywords) and all(
+    return (not include_keywords or any(keyword in name for keyword in include_keywords)) and all(
         keyword not in name for keyword in exclude_keywords)
 
 def compute_prune_ratio(args,model,type):
